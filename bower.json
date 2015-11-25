@@ -1,0 +1,23 @@
+{
+  "name": "sl-regions",
+  "authors": [
+    "huncode <me@huncode.com>"
+  ],
+  "description": "",
+  "main": "dist/regions.js",
+  "moduleType": [
+    "es6"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.8"
+  }
+}
