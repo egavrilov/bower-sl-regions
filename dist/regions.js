@@ -78,8 +78,8 @@
 	  };
 
 	  factory.getLocation = function () {
-	    return $http.get('json/location.json').then(function (response) {
-	      var current = response.data.data;
+	    return $http.get('http://api.love.sl/v1/geo/get_location/').then(function (response) {
+	      var current = response.data;
 	      if (!current) return $q.reject('Location not detected');
 
 	      factory.current = {
@@ -92,9 +92,9 @@
 	  };
 
 	  factory.getRegions = function () {
-	    return $http.get('json/regions.json').then(function (response) {
+	    return $http.get('http://api.love.sl/v2/outlets/regions/').then(function (response) {
 	      if (!response.data) return $q.reject('No regions listed');
-	      regions = response.data.data;
+	      regions = response.data;
 	      return regions;
 	    });
 	  };
