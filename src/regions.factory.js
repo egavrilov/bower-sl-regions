@@ -12,7 +12,7 @@ export default /*@ngInject*/ function Regions ($http, $q) {
     };
 
     factory.getLocation = function () {
-      return $http.get('http://api.love.sl/v1/geo/get_location/').then(function (response) {
+      return $q.when(factory.current || $http.get('http://api.love.sl/v1/geo/get_location/').then(function (response) {
         const current = response.data;
         if (!current) return $q.reject('Location not detected');
 
@@ -22,15 +22,15 @@ export default /*@ngInject*/ function Regions ($http, $q) {
         };
 
         return current;
-      })
+      }));
     };
 
     factory.getRegions = function () {
-      return $http.get('http://api.love.sl/v2/outlets/regions/').then(function (response) {
+      return $q.when(regions || $http.get('http://api.love.sl/v2/outlets/regions/').then(function (response) {
         if (!response.data) return $q.reject('No regions listed');
         regions = response.data;
         return regions;
-      });
+      }));
     };
 
     factory.setRegion = function (id, retryFlag) {
