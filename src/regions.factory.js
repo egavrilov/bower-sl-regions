@@ -10,7 +10,7 @@ export default /*@ngInject*/ function Regions($http, $rootScope, $q, $window) {
 
   factory.fetch = function () {
     return $q.all({
-      location: $q.when(factory.current || factory.getLocation()),
+      location: factory.getLocation(),
       regions: factory.getRegions()
     }).then(function (responses) {
       return responses.regions;
@@ -23,10 +23,15 @@ export default /*@ngInject*/ function Regions($http, $rootScope, $q, $window) {
         if (!current) return $q.reject('Location not detected');
         if (!current.region_id) {
           current = defaultRegion;
+          factory.notDefined = true;
+        }
+
+        if (!factory.current) {
+          factory.current = {};
         }
 
         factory.current.id = current.region_id;
-        factory.current.name =current.region_name;
+        factory.current.name = current.region_name;
 
         return current;
       }));
