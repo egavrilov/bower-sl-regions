@@ -73,15 +73,27 @@
 	    region_name: 'Москва'
 	  };
 	  var regions = undefined;
+	  var fetchInProgress = undefined;
 
 	  factory.fetch = function () {
-	    return $q.all({
+	    return fetchInProgress ? factory.fetching : fetch();
+	  };
+
+	  function fetch() {
+	    fetchInProgress = true;
+	    factory.fetching = $q.all({
 	      location: factory.getLocation(),
 	      regions: factory.getRegions()
 	    }).then(function (responses) {
+	      factory.all = responses.regions;
 	      return responses.regions;
+	    }).finally(function () {
+	      factory.fetching = null;
+	      fetchInProgress = false;
 	    });
-	  };
+
+	    return factory.fetching;
+	  }
 
 	  factory.getLocation = function () {
 	    return $q.when(factory.current || $http.get('http://api.love.sl/v1/geo/get_location/').then(function (response) {
