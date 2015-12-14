@@ -1,4 +1,4 @@
-export default /*@ngInject*/ function Regions($http, $rootScope, $q, $window) {
+export default /*@ngInject*/ function Regions(Cookie, $http, $rootScope, $q, $window) {
   let factory = {
     current: angular.fromJson($window.localStorage.getItem('sl.location'))
   };
@@ -57,7 +57,6 @@ export default /*@ngInject*/ function Regions($http, $rootScope, $q, $window) {
 
   factory.setRegion = function (id, retryFlag) {
     let region = regions.filter((_region) => _region.id === id)[0];
-    console.log(id);
 
     if (!region) {
       console.warn('No region with such id');
@@ -68,6 +67,7 @@ export default /*@ngInject*/ function Regions($http, $rootScope, $q, $window) {
     factory.current.id = region.id;
     factory.current.name = region.name;
 
+    Cookie.set('region_id', region.id);
     $window.localStorage.setItem('sl.location', angular.toJson(factory.current));
 
     $rootScope.$emit('region:change', region.id);

@@ -46,13 +46,17 @@
 
 	'use strict';
 
+	var _cookie = __webpack_require__(2);
+
+	var _cookie2 = _interopRequireDefault(_cookie);
+
 	var _regions = __webpack_require__(1);
 
 	var _regions2 = _interopRequireDefault(_regions);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	angular.module('sl.regions', []).factory('Regions', _regions2.default);
+	angular.module('sl.regions', []).factory('Regions', _regions2.default).factory('Cookie', _cookie2.default);
 
 /***/ },
 /* 1 */
@@ -64,7 +68,7 @@
 	  value: true
 	});
 	exports.default = Regions;
-	/*@ngInject*/function Regions($http, $rootScope, $q, $window) {
+	/*@ngInject*/function Regions(Cookie, $http, $rootScope, $q, $window) {
 	  var factory = {
 	    current: angular.fromJson($window.localStorage.getItem('sl.location'))
 	  };
@@ -127,7 +131,6 @@
 	    var region = regions.filter(function (_region) {
 	      return _region.id === id;
 	    })[0];
-	    console.log(id);
 
 	    if (!region) {
 	      console.warn('No region with such id');
@@ -138,6 +141,7 @@
 	    factory.current.id = region.id;
 	    factory.current.name = region.name;
 
+	    Cookie.set('region_id', region.id);
 	    $window.localStorage.setItem('sl.location', angular.toJson(factory.current));
 
 	    $rootScope.$emit('region:change', region.id);
@@ -146,6 +150,45 @@
 
 	  return factory;
 	}
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	function CookieFactory() {
+	  function setCookie(name, value, daysToExpire) {
+	    var date = new Date(Date.now() + (daysToExpire || 90) * 24 * 60 * 60 * 1000);
+	    var expires = '; expires=' + date.toGMTString();
+	    var domain = '; domain=.' + location.hostname.split('.').slice(-2).join('.');
+	    document.cookie = name + '=' + value + expires + domain + '; path=/';
+	  }
+
+	  function getCookie(name) {
+	    if (!name) return null;
+	    var cookies = document.cookie.split(';');
+	    var filteredCookie = cookies.filter(function (cookie) {
+	      return cookie.trim().indexOf(name + '=') === 0;
+	    })[0];
+	    return filteredCookie ? filteredCookie.split('=')[1] : null;
+	  }
+
+	  function removeCookie(name) {
+	    setCookie(name, '', -1);
+	  }
+
+	  return {
+	    set: setCookie,
+	    get: getCookie,
+	    remove: removeCookie
+	  };
+	}
+
+	exports.default = CookieFactory;
 
 /***/ }
 /******/ ]);
