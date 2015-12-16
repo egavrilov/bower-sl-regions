@@ -115,6 +115,8 @@
 	      factory.current.id = current.region_id;
 	      factory.current.name = current.region_name;
 
+	      broadcast();
+
 	      return current;
 	    }));
 	  };
@@ -143,10 +145,13 @@
 
 	    Cookie.set('region_id', region.id);
 	    $window.localStorage.setItem('sl.location', angular.toJson(factory.current));
-
-	    $rootScope.$emit('region:change', region.id);
-	    angular.element($window).trigger('angular::region::change', region);
+	    broadcast();
 	  };
+
+	  function broadcast() {
+	    $rootScope.$emit('region:change', factory.current);
+	    angular.element($window).trigger('angular::region::change', factory.current);
+	  }
 
 	  return factory;
 	}
