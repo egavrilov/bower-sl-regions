@@ -102,10 +102,11 @@
 	  factory.getLocation = function () {
 	    return $q.when(factory.current || $http.get('http://api.love.sl/v1/geo/get_location/').then(function (response) {
 	      var current = response.data;
+
+	      if (!Cookie.get('region_id')) factory.notDefined = true;
 	      if (!current) return $q.reject('Location not detected');
 	      if (!current.region_id) {
 	        current = defaultRegion;
-	        factory.notDefined = true;
 	      }
 
 	      if (!factory.current) {
