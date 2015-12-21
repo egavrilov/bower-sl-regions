@@ -144,6 +144,7 @@
 	    factory.current.id = region.id;
 	    factory.current.name = region.name;
 
+	    factory.notDefined = false;
 	    Cookie.set('region_id', region.id);
 	    $window.localStorage.setItem('sl.location', angular.toJson(factory.current));
 	    broadcast();
