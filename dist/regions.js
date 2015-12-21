@@ -116,7 +116,7 @@
 	      factory.current.id = current.region_id;
 	      factory.current.name = current.region_name;
 
-	      broadcast();
+	      //broadcast(true);
 
 	      return current;
 	    }));
@@ -150,9 +150,9 @@
 	    broadcast();
 	  };
 
-	  function broadcast() {
+	  function broadcast(initState) {
 	    $rootScope.$emit('region:change', factory.current);
-	    angular.element($window).trigger('angular::region::change', factory.current);
+	    angular.element($window).trigger('angular::region::change', factory.current, initState);
 	  }
 
 	  return factory;
