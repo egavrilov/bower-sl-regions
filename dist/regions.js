@@ -46,11 +46,11 @@
 
 	'use strict';
 
-	var _cookie = __webpack_require__(2);
+	var _cookie = __webpack_require__(1);
 
 	var _cookie2 = _interopRequireDefault(_cookie);
 
-	var _regions = __webpack_require__(1);
+	var _regions = __webpack_require__(2);
 
 	var _regions2 = _interopRequireDefault(_regions);
 
@@ -67,6 +67,45 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	function CookieFactory() {
+	  function setCookie(name, value, daysToExpire) {
+	    var date = new Date(Date.now() + (daysToExpire || 90) * 24 * 60 * 60 * 1000);
+	    var expires = '; expires=' + date.toGMTString();
+	    var domain = '; domain=.' + location.hostname.split('.').slice(-2).join('.');
+	    document.cookie = name + '=' + value + expires + domain + '; path=/';
+	  }
+
+	  function getCookie(name) {
+	    if (!name) return null;
+	    var cookies = document.cookie.split(';');
+	    var filteredCookie = cookies.filter(function (cookie) {
+	      return cookie.trim().indexOf(name + '=') === 0;
+	    })[0];
+	    return filteredCookie ? filteredCookie.split('=')[1] : null;
+	  }
+
+	  function removeCookie(name) {
+	    setCookie(name, '', -1);
+	  }
+
+	  return {
+	    set: setCookie,
+	    get: getCookie,
+	    remove: removeCookie
+	  };
+	}
+
+	exports.default = CookieFactory;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.default = Regions;
 	/*@ngInject*/function Regions(Cookie, $http, $rootScope, $q, $window) {
 	  var factory = {
@@ -76,7 +115,7 @@
 	    region_id: '91eae2f5-b1d7-442f-bc86-c6c11c581fad',
 	    region_name: 'Москва'
 	  };
-	  var regions = undefined;
+	  var regions = angular.fromJson($window.localStorage.getItem('sl.regions'));
 	  var fetchInProgress = undefined;
 
 	  factory.fetch = function () {
@@ -89,7 +128,9 @@
 	      location: factory.getLocation(),
 	      regions: factory.getRegions()
 	    }).then(function (responses) {
-	      factory.all = responses.regions;
+	      factory.all = responses.regions.filter(function (region) {
+	        return region.count;
+	      });
 	      return responses.regions;
 	    }).finally(function () {
 	      factory.fetching = null;
@@ -157,45 +198,6 @@
 
 	  return factory;
 	}
-
-/***/ },
-/* 2 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	function CookieFactory() {
-	  function setCookie(name, value, daysToExpire) {
-	    var date = new Date(Date.now() + (daysToExpire || 90) * 24 * 60 * 60 * 1000);
-	    var expires = '; expires=' + date.toGMTString();
-	    var domain = '; domain=.' + location.hostname.split('.').slice(-2).join('.');
-	    document.cookie = name + '=' + value + expires + domain + '; path=/';
-	  }
-
-	  function getCookie(name) {
-	    if (!name) return null;
-	    var cookies = document.cookie.split(';');
-	    var filteredCookie = cookies.filter(function (cookie) {
-	      return cookie.trim().indexOf(name + '=') === 0;
-	    })[0];
-	    return filteredCookie ? filteredCookie.split('=')[1] : null;
-	  }
-
-	  function removeCookie(name) {
-	    setCookie(name, '', -1);
-	  }
-
-	  return {
-	    set: setCookie,
-	    get: getCookie,
-	    remove: removeCookie
-	  };
-	}
-
-	exports.default = CookieFactory;
 
 /***/ }
 /******/ ]);
