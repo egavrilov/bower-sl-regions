@@ -115,7 +115,7 @@
 	    region_id: '91eae2f5-b1d7-442f-bc86-c6c11c581fad',
 	    region_name: 'Москва'
 	  };
-	  var regions = angular.fromJson($window.localStorage.getItem('sl.regions'));
+	  var regions = angular.fromJson($window.sessionStorage.getItem('sl.regions'));
 	  var fetchInProgress = undefined;
 
 	  factory.fetch = function () {
@@ -129,8 +129,15 @@
 	      regions: factory.getRegions()
 	    }).then(function (responses) {
 	      factory.all = responses.regions.filter(function (region) {
+	        if (region.id === factory.current.id) angular.extend(factory.current, region);
+
 	        return region.count;
 	      });
+
+	      $window.sessionStorage.setItem('sl.regions', angular.toJson(factory.all));
+	      factory.count = factory.all.reduce(function (total, regionCount) {
+	        return total + (regionCount.count || 0);
+	      }, 0);
 	      return responses.regions;
 	    }).finally(function () {
 	      factory.fetching = null;

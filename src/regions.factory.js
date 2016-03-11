@@ -6,7 +6,7 @@ export default /*@ngInject*/ function Regions(Cookie, $http, $rootScope, $q, $wi
     region_id: '91eae2f5-b1d7-442f-bc86-c6c11c581fad',
     region_name: 'Москва'
   };
-  let regions = angular.fromJson($window.localStorage.getItem('sl.regions'));
+  let regions = angular.fromJson($window.sessionStorage.getItem('sl.regions'));
   let fetchInProgress;
 
   factory.fetch = () => fetchInProgress ? factory.fetching : fetch();
@@ -18,7 +18,16 @@ export default /*@ngInject*/ function Regions(Cookie, $http, $rootScope, $q, $wi
       regions: factory.getRegions()
     }).then(function (responses) {
       factory.all = responses.regions
-        .filter((region) => region.count);
+        .filter((region) => {
+          if (region.id === factory.current.id)
+            angular.extend(factory.current, region);
+
+          return region.count;
+        });
+
+      $window.sessionStorage.setItem('sl.regions', angular.toJson(factory.all));
+      factory.count = factory.all
+        .reduce((total, regionCount) => total + (regionCount.count || 0 ), 0);
       return responses.regions;
     }).finally(() => {
       factory.fetching = null;
